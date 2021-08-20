@@ -61,12 +61,10 @@ public class ReservationService {
 
             List<Reservation> previousReservations = reservationRepository.findBySchedule_Id(scheduleId);
 
-            if(previousReservations.size() > 0){
-                ReservationStatus status = previousReservations.get(previousReservations.size() - 1).getReservationStatus();
-                if(status != ReservationStatus.CANCELLED && status != ReservationStatus.RESCHEDULED){
+            if(previousReservations.size() > 0){               
                     continue;
-                }                     
-            }
+            }                     
+            
            
             ReservationDTO reservDTO = createReservationDTO(scheduleOpt, guestId);           
             reservationDTOList.add(reservDTO);
@@ -86,10 +84,9 @@ public class ReservationService {
         List<Reservation> previousReservations = reservationRepository.findBySchedule_Id(scheduleId);
 
         if(previousReservations.size() > 0){
-            ReservationStatus status = previousReservations.get(previousReservations.size() - 1).getReservationStatus();
-            if(status != ReservationStatus.CANCELLED && status != ReservationStatus.RESCHEDULED){
-                throw new IllegalArgumentException("There is already a reservation for this schedule.");
-            }                     
+            //Considering that a previous canceled or rescheduled reservation wont a schedule from a previous date schedule                    
+            throw new IllegalArgumentException
+            ("There is already a ready to play/canceled or reescheduled reservation for this schedule. Consider using a future available schedule");                             
         }
 
         if(schedule.isPresent()){
@@ -228,19 +225,14 @@ public class ReservationService {
 
     public ReservationDTO rescheduleReservation(Long previousReservationId, LocalDateTime startDate, Long tennisCourtId) {
         Reservation previousReservation = cancelReservation(previousReservationId);
-        Long scheduleId = previousReservation.getSchedule().getId();
-        Boolean scheduleAlreadyExists = false;
         Schedule scheduleFound = new Schedule();
         
-        if (scheduleId.equals(previousReservation.getSchedule().getId())) {
-            scheduleAlreadyExists = true;
-            scheduleFound = this.validateScheduleSlot(startDate, tennisCourtId);              
-        }
-
+        scheduleFound = this.validateScheduleSlot(startDate, tennisCourtId);              
+        
         previousReservation.setReservationStatus(ReservationStatus.RESCHEDULED);        
 
         ReservationDTO reservationBooked = bookReservation(CreateReservationRequestDTO.builder().guestId(previousReservation.getGuest().getId())
-        .scheduleId(scheduleAlreadyExists ? scheduleFound.getId() : scheduleId)
+        .scheduleId(scheduleFound.getId())
         .build());
 
         reservationRepository.saveAndFlush(previousReservation);
