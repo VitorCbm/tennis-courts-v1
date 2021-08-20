@@ -22,5 +22,5 @@ public class CreateReservationRequestDTO {
 
     @NotNull
     private Long scheduleId;
-
+    
 }
