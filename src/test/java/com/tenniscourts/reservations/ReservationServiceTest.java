@@ -1,6 +1,5 @@
 package com.tenniscourts.reservations;
 
-import com.tenniscourts.schedules.Schedule;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -13,6 +12,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.tenniscourts.schedules.Schedule;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest
