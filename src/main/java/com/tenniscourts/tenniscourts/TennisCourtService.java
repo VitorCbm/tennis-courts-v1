@@ -2,16 +2,21 @@ package com.tenniscourts.tenniscourts;
 
 import com.tenniscourts.exceptions.EntityNotFoundException;
 import com.tenniscourts.schedules.ScheduleService;
-import lombok.AllArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
 public class TennisCourtService {
 
-    private final TennisCourtRepository tennisCourtRepository;
+    @Autowired
+    TennisCourtRepository tennisCourtRepository;
 
-    private final ScheduleService scheduleService;
+    @Autowired
+    ScheduleService scheduleService;
 
     private final TennisCourtMapper tennisCourtMapper;
 
